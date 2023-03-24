@@ -1,5 +1,5 @@
 {
-    "name": "wame/reviews",
+    "name": "pppcreative/reviews",
     "description": "package create Reviews table, model, observer",
     "type": "library",
     "license": "MIT",
