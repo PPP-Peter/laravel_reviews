@@ -1,4 +1,7 @@
+## Folder Packages
+
 ### Service Provider 
+
 - Add to config/app.php
 
 Wame\Review\ReviewServiceProvider::class,
@@ -18,7 +21,11 @@ Wame\Review\ReviewServiceProvider::class,
 
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
             "Wame\\Review\\": "package/reviews/src/"
         }
     },
+
+### damp autoload
+### vendor publish   -- reviewServiceProvider
+
