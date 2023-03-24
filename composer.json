@@ -1,0 +1,13 @@
+{
+    "name": "wame/reviews",
+    "description": "package create Reviews table, model, observer",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Wamesk\\Review\\": "src/"
+        }
+    }
+}
