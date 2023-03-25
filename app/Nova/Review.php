@@ -1,6 +1,6 @@
 <?php
 
-namespace nova;
+namespace App\Nova;
 
 use App\Nova\BaseResource;
 use Eminiarts\Tabs\Tab;
