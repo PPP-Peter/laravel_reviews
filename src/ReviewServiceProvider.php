@@ -36,6 +36,9 @@ class ReviewServiceProvider extends  ServiceProvider
             //export config
             $this->publishes([__DIR__.'/../config/reviews.php' => config_path('reviews.php')], 'config');
 
+            // Export lang
+            $this->publishes([__DIR__ . '/../resources/lang' => resource_path('lang')], 'language');
+
         }
 
     }

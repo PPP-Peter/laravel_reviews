@@ -11,6 +11,14 @@ class Review extends \App\Models\BaseModel
     use SoftDeletes;
     use HasUlids;
 
+    //TODO:konstanty
+    const
+        STATUS_REVIEW_WAITING = '0',
+        STATUS_REVIEW_APPROVED = '1',
+        STATUS_REVIEW_DENIED = '2',
+        STATUS_REVIEW_EDIT = '3',
+        STATUS_REVIEW_FINISHED = '4';
+
     protected $guarded = ['id'];
 
     protected $casts = [
