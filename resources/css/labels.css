@@ -1,0 +1,9 @@
+
+.approved{
+    background-color: #4AA02C !important;
+    color:white !important;
+}
+.denied{
+    background-color: #DC3545 !important;
+    color:white !important;
+}

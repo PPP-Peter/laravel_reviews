@@ -62,41 +62,50 @@ class Review extends BaseResource
                     BelongsTo::make(__('field.user'), 'user', User::class),
 
                     Trix::make('text', 'review'),
-                    Number::make(__('reviews.rating'), 'rating'),
+                    Number::make(__('reviews.rating'), 'rating')->displayUsing(
+                        function ($name) {
+                            return "<span style='color:red'>$name</span>";
+                        })
+                        ->asHtml(),
 
                     Select::make('status', 'status')
-                        ->options([
-                            \App\Models\Review::WAITING => 'waiting',
-                            \App\Models\Review::APPROVED => 'approved',
-                            \App\Models\Review::DENIED => 'denied',
-                            \App\Models\Review::EDIT => 'edit',
-                            \App\Models\Review::FINISHED => 'finished',
-                        ])
+                        ->options($this->statuses())
                         ->displayUsingLabels()
                         ->onlyOnForms()
+                        ->default('0')
+                        //->hideWhenCreating()
                         ->rules('required')
                         ->required(),
 
                     Badge::make('status', 'status')
                         ->map([
-                            \App\Models\Review::WAITING => 'success',
-                            \App\Models\Review::APPROVED => 'info',
-                            \App\Models\Review::DENIED => 'info',
-                            \App\Models\Review::EDIT => 'info',
-                            \App\Models\Review::FINISHED => 'warning',
+                            \App\Models\Review::EDIT => 'edit',
+                            \App\Models\Review::FINISHED => 'finished',
+                            \App\Models\Review::DENIED => 'denied',
+                            \App\Models\Review::APPROVED => 'approved',
+                            \App\Models\Review::WAITING => 'waiting',
                         ])
-                        ->labels($this->statuses())
-                        ->withIcons(),
+                        ->addTypes([
+                            'edit' => config('reviews.label.edit'),
+                            'finished' => config('reviews.label.finished'),
+                            'denied' => config('reviews.label.denied'),
+                            'approved' => config('reviews.label.approved'),
+                            'waiting' => config('reviews.label.waiting'),
+                        ])
+                        ->labels($this->statuses()),
 
-                    BelongsTo::make('Updated By', 'updated_status_at', User::class),
+                    BelongsTo::make('Updated By', 'updated_status_at', User::class)->readonly()->hideWhenCreating(),
 
-                    Text::make(__('reviews.updated_status_by'), 'updated_status_by')->readonly(),
+                    Text::make(__('reviews.updated_status_by'), 'updated_status_by')->readonly()->readonly()->hideWhenCreating(),
+                    //   ->displayUsing(function ($name) {
+//                           dd( \App\Models\User::find($name));
+//                           return \App\Models\User::find($name)->name;
                     DateTime::make(__('reviews.updated_status_at'), 'updated_status_at')->displayUsing(function ($date) {
                         if (is_null($date)) {
                             return '';
                         }
                         else return $date->diffForHumans();  //->format('d.m.Y H:i');
-                    })->readonly(),
+                    })->readonly()->hideWhenCreating(),
 
                     MorphTo::make(__('reviews.model'), 'model')->types([
                         config('reviews.types.1'), //User::class,
