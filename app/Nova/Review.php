@@ -64,20 +64,31 @@ class Review extends BaseResource
                     Trix::make('text', 'review'),
                     Number::make(__('reviews.rating'), 'rating'),
 
-                    Select::make('status', 'status')->options([
-                        '0' => __('reviews.waiting'),
-                        '1' => __('reviews.approved'),
-                        '2' => __('reviews.denied'),
-                        '3' => __('reviews.waiting'),
-                        '4' => __('reviews.waiting'),
-                    ])->displayUsingLabels(),
-                    Badge::make('status', 'status')->map([
-                        '0' => 'danger',
-                        '1' => 'warning',
-                        '2' => 'success',
-                        '3' => 'success',
-                        '4' => 'success',
-                    ]),
+                    Select::make('status', 'status')
+                        ->options([
+                            \App\Models\Review::WAITING => 'waiting',
+                            \App\Models\Review::APPROVED => 'approved',
+                            \App\Models\Review::DENIED => 'denied',
+                            \App\Models\Review::EDIT => 'edit',
+                            \App\Models\Review::FINISHED => 'finished',
+                        ])
+                        ->displayUsingLabels()
+                        ->onlyOnForms()
+                        ->rules('required')
+                        ->required(),
+
+                    Badge::make('status', 'status')
+                        ->map([
+                            \App\Models\Review::WAITING => 'success',
+                            \App\Models\Review::APPROVED => 'info',
+                            \App\Models\Review::DENIED => 'info',
+                            \App\Models\Review::EDIT => 'info',
+                            \App\Models\Review::FINISHED => 'warning',
+                        ])
+                        ->labels($this->statuses())
+                        ->withIcons(),
+
+                    BelongsTo::make('Updated By', 'updated_status_at', User::class),
 
                     Text::make(__('reviews.updated_status_by'), 'updated_status_by')->readonly(),
                     DateTime::make(__('reviews.updated_status_at'), 'updated_status_at')->displayUsing(function ($date) {
@@ -85,7 +96,7 @@ class Review extends BaseResource
                             return '';
                         }
                         else return $date->diffForHumans();  //->format('d.m.Y H:i');
-                    }),
+                    })->readonly(),
 
                     MorphTo::make(__('reviews.model'), 'model')->types([
                         config('reviews.types.1'), //User::class,

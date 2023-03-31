@@ -11,13 +11,33 @@ class Review extends \App\Models\BaseModel
     use SoftDeletes;
     use HasUlids;
 
-    //TODO:konstanty
     const
-        STATUS_REVIEW_WAITING = '0',
-        STATUS_REVIEW_APPROVED = '1',
-        STATUS_REVIEW_DENIED = '2',
-        STATUS_REVIEW_EDIT = '3',
-        STATUS_REVIEW_FINISHED = '4';
+        EDIT = '0',
+        FINISHED = '1',
+        WAITING = '2',
+        APPROVED = '3',
+        DENIED = '4';
+
+    public function getStatusLabelAttribute(): mixed
+    {
+        return $this->statuses()[$this->status] ?? null;
+    }
+
+    public function statuses(): array
+    {
+        return [
+            self::EDIT => __('reviews.edit'),
+            self::FINISHED => __('reviews.finished'),
+            self::WAITING => __('reviews.waiting'),
+            self::APPROVED => __('reviews.approved'),
+            self::DENIED => __('reviews.denied'),
+        ];
+    }
+
+    public function updated_status_at(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_status_at');
+    }
 
     protected $guarded = ['id'];
 
