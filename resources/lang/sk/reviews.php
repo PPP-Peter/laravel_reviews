@@ -9,6 +9,6 @@ return [
     "waiting" => "Čakajúci",
     "approved" => "Schválený",
     "denied" => "Zamietnutý",
-    "finished" => "hotové",
-    "edit" => "upraviť",
+    "finished" => "Hotové",
+    "edit" => "Upraviť",
 ];

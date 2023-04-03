@@ -57,11 +57,13 @@ class Review extends BaseResource
 
                     ID::make()->onlyOnForms(),
 
-                    BelongsTo::make(__('field.user'), 'user', User::class),
+                    BelongsTo::make(__('field.user'), 'user', User::class)
+                        ->filterable(),
 
                     Trix::make('text', 'review'),
 
-                    RatingField::make(__('reviews.rating'), 'rating'),
+                    RatingField::make(__('reviews.rating'), 'rating')
+                        ->sortable(),
 
                     Select::make('status', 'status')
                         ->options($this->statuses())
@@ -69,6 +71,7 @@ class Review extends BaseResource
                         ->onlyOnForms()
                         ->default('0')
                         ->hideWhenCreating()
+                        ->sortable()
                         ->rules('required'),
                     Badge::make('status', 'status')
                         ->map([
@@ -85,17 +88,27 @@ class Review extends BaseResource
                             'approved' => config('reviews.label.approved'),
                             'waiting' => config('reviews.label.waiting'),
                         ])
+                        ->filterable()
+                        ->sortable()
                         ->labels($this->statuses()),
 
 
-                    BelongsTo::make('Updated By', 'edited', User::class)->readonly()->hideWhenCreating()->hideWhenUpdating(),
+                    BelongsTo::make('Updated By', 'edited', User::class)
+                        ->readonly()
+                        ->hideWhenCreating()
+                        ->hideWhenUpdating(),
 
-                    DateTime::make(__('reviews.updated_status_at'), 'updated_status_at')->displayUsing(function ($date) {
-                        if (is_null($date)) {
-                            return '';
-                        }
-                        else return $date->diffForHumans();  //->format('d.m.Y H:i');
-                    })->readonly()->hideWhenCreating()->hideWhenUpdating(),
+                    DateTime::make(__('reviews.updated_status_at'), 'updated_status_at')
+                        ->displayUsing(function ($date) {
+                            if (is_null($date)) {
+                                return '';
+                            }
+                            else return $date->diffForHumans();  //->format('d.m.Y H:i');
+                        })
+                        ->readonly()
+                        ->hideWhenCreating()
+                        ->hideWhenUpdating()
+                        ->sortable(),
 
                     MorphTo::make(__('reviews.model'), 'model')->types([
                         config('reviews.types.1'), //User::class,
