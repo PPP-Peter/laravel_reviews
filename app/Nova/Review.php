@@ -2,30 +2,29 @@
 
 namespace App\Nova;
 
-use App\Nova\BaseResource;
 use Eminiarts\Tabs\Tab;
 use Eminiarts\Tabs\Tabs;
 use Eminiarts\Tabs\Traits\HasTabs;
 use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphTo;
-use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Wamesk\RatingField\RatingField;
 
 class Review extends BaseResource
 {
     use HasTabs;
 
-   /**
-    * The model the resource corresponds to.
-    *
-    * @var string
-    */
+    /**
+     * The model the resource corresponds to.
+     *
+     * @var string
+     */
     public static $model = \App\Models\Review::class;
 
     /**
@@ -44,8 +43,6 @@ class Review extends BaseResource
         'id',
     ];
 
-
-
     /**
      * Get the fields displayed by the resource.
      *
@@ -57,33 +54,29 @@ class Review extends BaseResource
         return [
             Tabs::make(__('review.detail', ['title' => $this->title]), [
                 Tab::make(__('review.singular'), [
+
                     ID::make()->onlyOnForms(),
 
                     BelongsTo::make(__('field.user'), 'user', User::class),
 
                     Trix::make('text', 'review'),
-                    Number::make(__('reviews.rating'), 'rating')->displayUsing(
-                        function ($name) {
-                            return "<span style='color:red'>$name</span>";
-                        })
-                        ->asHtml(),
+
+                    RatingField::make(__('reviews.rating'), 'rating'),
 
                     Select::make('status', 'status')
                         ->options($this->statuses())
                         ->displayUsingLabels()
                         ->onlyOnForms()
                         ->default('0')
-                        //->hideWhenCreating()
-                        ->rules('required')
-                        ->required(),
-
+                        ->hideWhenCreating()
+                        ->rules('required'),
                     Badge::make('status', 'status')
                         ->map([
+                            \App\Models\Review::WAITING => 'waiting',
                             \App\Models\Review::EDIT => 'edit',
-                            \App\Models\Review::FINISHED => 'finished',
                             \App\Models\Review::DENIED => 'denied',
                             \App\Models\Review::APPROVED => 'approved',
-                            \App\Models\Review::WAITING => 'waiting',
+                            \App\Models\Review::FINISHED => 'finished',
                         ])
                         ->addTypes([
                             'edit' => config('reviews.label.edit'),
@@ -94,24 +87,20 @@ class Review extends BaseResource
                         ])
                         ->labels($this->statuses()),
 
-                    BelongsTo::make('Updated By', 'updated_status_at', User::class)->readonly()->hideWhenCreating(),
 
-                    Text::make(__('reviews.updated_status_by'), 'updated_status_by')->readonly()->readonly()->hideWhenCreating(),
-                    //   ->displayUsing(function ($name) {
-//                           dd( \App\Models\User::find($name));
-//                           return \App\Models\User::find($name)->name;
+                    BelongsTo::make('Updated By', 'edited', User::class)->readonly()->hideWhenCreating()->hideWhenUpdating(),
+
                     DateTime::make(__('reviews.updated_status_at'), 'updated_status_at')->displayUsing(function ($date) {
                         if (is_null($date)) {
                             return '';
                         }
                         else return $date->diffForHumans();  //->format('d.m.Y H:i');
-                    })->readonly()->hideWhenCreating(),
+                    })->readonly()->hideWhenCreating()->hideWhenUpdating(),
 
                     MorphTo::make(__('reviews.model'), 'model')->types([
                         config('reviews.types.1'), //User::class,
                         config('reviews.types.2'), //Order::class
                     ]),
-
                 ]),
             ])->withToolbar(),
         ];
@@ -160,5 +149,7 @@ class Review extends BaseResource
     {
         return [];
     }
+
+
 
 }

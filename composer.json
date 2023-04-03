@@ -4,7 +4,9 @@
     "type": "library",
     "license": "MIT",
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "wamesk/rating-field": "*"
+    },
     "autoload": {
         "psr-4": {
             "Wamesk\\Review\\": "src/"

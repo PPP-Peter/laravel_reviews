@@ -11,34 +11,6 @@ class Review extends \App\Models\BaseModel
     use SoftDeletes;
     use HasUlids;
 
-    const
-        EDIT = '0',
-        FINISHED = '1',
-        WAITING = '2',
-        APPROVED = '3',
-        DENIED = '4';
-
-    public function getStatusLabelAttribute(): mixed
-    {
-        return $this->statuses()[$this->status] ?? null;
-    }
-
-    public function statuses(): array
-    {
-        return [
-            self::EDIT => __('reviews.edit'),
-            self::FINISHED => __('reviews.finished'),
-            self::WAITING => __('reviews.waiting'),
-            self::APPROVED => __('reviews.approved'),
-            self::DENIED => __('reviews.denied'),
-        ];
-    }
-
-    public function updated_status_at(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'updated_status_at');
-    }
-
     protected $guarded = ['id'];
 
     protected $casts = [
@@ -48,11 +20,38 @@ class Review extends \App\Models\BaseModel
         'updated_status_at' => 'datetime',
     ];
 
+    const
+        WAITING = '0',
+        EDIT = '1',
+        APPROVED = '3',
+        DENIED = '4',
+        FINISHED = '5';
+
+    public function getStatusLabelAttribute(): mixed
+    {
+        return $this->statuses()[$this->status] ?? null;
+    }
+
+    public function statuses(): array
+    {
+        return [
+            self::WAITING => __('reviews.waiting'),
+            self::EDIT => __('reviews.edit'),
+            self::APPROVED => __('reviews.approved'),
+            self::DENIED => __('reviews.denied'),
+            self::FINISHED => __('reviews.finished'),
+        ];
+    }
+
+    public function edited(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_status_at');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(\App\Models\User::class);
     }
-
 
     public function model(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
