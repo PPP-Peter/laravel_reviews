@@ -1,10 +1,13 @@
 
 ### Folder Packages
 Service Provider
-Add to config/app.php
+
+Add to config/app.php 
+
 Wame\Review\ReviewServiceProvider::class,
 
 EventServiceProviedr
+
 add observer nad listeners
 ```php
    /**
@@ -36,11 +39,9 @@ composer.json
 },
 ```
 damp autoload
+
 vendor publish -- reviewServiceProvider
+```php
 php artisan vendor:publish --provider="Wame\Reviews\ReviewServiceProvider"
-
-Config
-types Models
-stars count
-
+```
 
