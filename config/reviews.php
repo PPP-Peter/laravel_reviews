@@ -6,11 +6,13 @@ use App\Nova\User;
 return [
 
     'types' => [
-        '1' => User::class,
-        '2' => Order::class,
+       User::class,
+       Order::class,
     ],
 
-    'stars_count' => 5,
+    'status_use' => true,
+
+    'stars_count' => 5,  // in new version
 
     'label' => [
 

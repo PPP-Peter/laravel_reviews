@@ -60,20 +60,21 @@ class Review extends BaseResource
                     BelongsTo::make(__('field.user'), 'user', User::class)
                         ->filterable(),
 
-                    Trix::make('text', 'review'),
+                    Trix::make(__('text'), 'review'),
 
                     RatingField::make(__('reviews.rating'), 'rating')
                         ->sortable(),
 
-                    Select::make('status', 'status')
+                    Select::make(__('status'), 'status')
                         ->options($this->statuses())
                         ->displayUsingLabels()
                         ->onlyOnForms()
                         ->default('0')
                         ->hideWhenCreating()
                         ->sortable()
-                        ->rules('required'),
-                    Badge::make('status', 'status')
+                        ->rules('required')
+                        ->hideWhenUpdating(config('reviews.status_use') == false),
+                    Badge::make(__('status'), 'status')
                         ->map([
                             \App\Models\Review::WAITING => 'waiting',
                             \App\Models\Review::EDIT => 'edit',
@@ -90,10 +91,12 @@ class Review extends BaseResource
                         ])
                         ->filterable()
                         ->sortable()
-                        ->labels($this->statuses()),
+                        ->labels($this->statuses())
+                        ->hideFromIndex(config('reviews.status_use') == false)
+                        ->hideFromDetail(config('reviews.status_use') == false),
 
 
-                    BelongsTo::make('Updated By', 'edited', User::class)
+                    BelongsTo::make(__('reviews.updated by'), 'edited', User::class)
                         ->readonly()
                         ->hideWhenCreating()
                         ->hideWhenUpdating(),
@@ -110,10 +113,9 @@ class Review extends BaseResource
                         ->hideWhenUpdating()
                         ->sortable(),
 
-                    MorphTo::make(__('reviews.model'), 'model')->types([
-                        config('reviews.types.1'), //User::class,
-                        config('reviews.types.2'), //Order::class
-                    ]),
+                    MorphTo::make(__('reviews.model'), 'model')->types(
+                        config('reviews.types')
+                    ),
                 ]),
             ])->withToolbar(),
         ];
